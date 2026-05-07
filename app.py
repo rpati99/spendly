@@ -31,6 +31,16 @@ def logout():
     return "Logout — coming in Step 3"
 
 
+@app.route("/terms")
+def terms():
+    return render_template("terms.html")
+
+
+@app.route("/privacy")
+def privacy():
+    return render_template("privacy.html")
+
+
 @app.route("/profile")
 def profile():
     return "Profile page — coming in Step 4"
