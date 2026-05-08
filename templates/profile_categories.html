@@ -10,6 +10,17 @@
             <p class="profile-subtitle">Where your money goes</p>
         </div>
 
+        <div class="date-filter-form">
+            <form method="GET" action="{{ url_for('profile_categories') }}">
+                <input type="date" name="start" value="{{ start_date or '' }}" placeholder="Start date">
+                <input type="date" name="end" value="{{ end_date or '' }}" placeholder="End date">
+                <button type="submit">Filter</button>
+                {% if start_date or end_date %}
+                <a href="{{ url_for('profile_categories') }}" class="clear-btn">Clear</a>
+                {% endif %}
+            </form>
+        </div>
+
         {% if not breakdown %}
         <div class="stats-empty">
             <p>No expenses recorded yet.</p>

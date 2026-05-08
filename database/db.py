@@ -10,8 +10,20 @@ def get_db():
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
         db.row_factory = sqlite3.Row
-        db.execute("PRAGMA foreign_keys = ON")
+    db.execute("PRAGMA foreign_keys = ON")
     return db
+
+
+def _build_where_clause(user_id, start_date=None, end_date=None):
+    where_clause = "WHERE user_id = ?"
+    params = [user_id]
+    if start_date:
+        where_clause += " AND date >= ?"
+        params.append(start_date)
+    if end_date:
+        where_clause += " AND date <= ?"
+        params.append(end_date)
+    return where_clause, params
 
 
 def init_db():
@@ -51,41 +63,43 @@ def get_user_by_id(user_id):
     return cur.fetchone()
 
 
-def get_user_expenses(user_id, limit=20, offset=0):
+def get_user_expenses(user_id, limit=20, offset=0, start_date=None, end_date=None):
     db = get_db()
+    where_clause, params = _build_where_clause(user_id, start_date, end_date)
+    params.extend([limit, offset])
     cur = db.execute(
-        "SELECT id, amount, category, date, description, created_at "
-        "FROM expenses WHERE user_id = ? ORDER BY date DESC, id DESC LIMIT ? OFFSET ?",
-        (user_id, limit, offset),
+        f"SELECT id, amount, category, date, description, created_at "
+        f"FROM expenses {where_clause} ORDER BY date DESC, id DESC LIMIT ? OFFSET ?",
+        params,
     )
     return cur.fetchall()
 
 
-def count_user_expenses(user_id):
+def count_user_expenses(user_id, start_date=None, end_date=None):
     db = get_db()
-    cur = db.execute("SELECT COUNT(*) as count FROM expenses WHERE user_id = ?", (user_id,))
+    where_clause, params = _build_where_clause(user_id, start_date, end_date)
+    cur = db.execute(f"SELECT COUNT(*) as count FROM expenses {where_clause}", params)
     return cur.fetchone()["count"]
 
 
-def get_expense_stats(user_id):
+def get_expense_stats(user_id, start_date=None, end_date=None):
     db = get_db()
+    where_clause, params = _build_where_clause(user_id, start_date, end_date)
+
     row = db.execute(
-        "SELECT COUNT(*) as tx_count, COALESCE(SUM(amount), 0) as total_spent, "
-        "COALESCE(AVG(amount), 0) as avg_amount FROM expenses WHERE user_id = ?",
-        (user_id,),
+        f"SELECT COUNT(*) as tx_count, COALESCE(SUM(amount), 0) as total_spent, "
+        f"COALESCE(AVG(amount), 0) as avg_amount FROM expenses {where_clause}",
+        params,
     ).fetchone()
 
     total = row["total_spent"]
     tx_count = row["tx_count"]
 
-    cur = db.execute(
-        "SELECT MIN(date) as first_date FROM expenses WHERE user_id = ?", (user_id,)
-    )
+    cur = db.execute(f"SELECT MIN(date) as first_date FROM expenses {where_clause}", params)
     first_row = cur.fetchone()
 
     monthly_avg = 0
     if tx_count > 0 and first_row["first_date"]:
-        import datetime
         from datetime import datetime as dt
         first = dt.strptime(first_row["first_date"], "%Y-%m-%d")
         now = dt.now()
@@ -100,12 +114,13 @@ def get_expense_stats(user_id):
     }
 
 
-def get_category_breakdown(user_id):
+def get_category_breakdown(user_id, start_date=None, end_date=None):
     db = get_db()
+    where_clause, params = _build_where_clause(user_id, start_date, end_date)
     cur = db.execute(
-        "SELECT category, COUNT(*) as tx_count, COALESCE(SUM(amount), 0) as total "
-        "FROM expenses WHERE user_id = ? GROUP BY category ORDER BY total DESC",
-        (user_id,),
+        f"SELECT category, COUNT(*) as tx_count, COALESCE(SUM(amount), 0) as total "
+        f"FROM expenses {where_clause} GROUP BY category ORDER BY total DESC",
+        params,
     )
     rows = cur.fetchall()
 
