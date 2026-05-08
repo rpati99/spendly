@@ -6,55 +6,60 @@
 
 <section class="hero">
     <div class="hero-inner">
-        <div class="hero-badge">Personal Finance Tracker</div>
-        <h1 class="hero-title">
-            Know where your<br>
-            <em>money goes</em>
-        </h1>
-        <p class="hero-subtitle">
-            Log expenses, understand your spending patterns,
-            and take control of your financial life —
-            one transaction at a time.
-        </p>
+        <h1 class="hero-title">Track every rupee.</h1>
+        <h2 class="hero-subheading">Know where it goes.</h2>
+        <p class="hero-body">Spendy helps you log expenses, spot patterns, and stay on budget — no spreadsheets needed.</p>
         <div class="hero-actions">
-            <a href="{{ url_for('register') }}" class="btn-primary">Start tracking free</a>
-            <a href="{{ url_for('login') }}" class="btn-ghost">Sign in</a>
+            <a href="{{ url_for('register') }}" class="btn-primary">Create free account</a>
+            <a href="#" class="btn-secondary" id="video-trigger" data-video="https://www.youtube.com/embed/dQw4w9WgXcQ">See how it works</a>
         </div>
     </div>
+    <div class="accent-banner">
+        <span class="accent-text">Free to use · No credit card needed</span>
+    </div>
     <div class="hero-visual">
-        <div class="mock-card">
-            <div class="mock-card-header">
-                <span class="mock-label">March 2026</span>
-                <span class="mock-total">₹12,450</span>
+        <div class="browser-mock">
+            <div class="browser-bar">
+                <span class="browser-dot"></span>
+                <span class="browser-dot"></span>
+                <span class="browser-dot"></span>
             </div>
-            <div class="mock-bars">
-                <div class="mock-bar-row">
-                    <span class="mock-cat">Bills</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar" style="width: 72%"></div>
+            <div class="dashboard-mock">
+                <div class="stat-cards">
+                    <div class="stat-card">
+                        <span class="stat-label">This month</span>
+                        <span class="stat-value">₹18,240</span>
+                        <span class="stat-change danger">+12%</span>
                     </div>
-                    <span class="mock-amt">₹4,500</span>
+                    <div class="stat-card">
+                        <span class="stat-label">Budget left</span>
+                        <span class="stat-value">₹6,760</span>
+                        <span class="stat-change success">43%</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Transactions</span>
+                        <span class="stat-value">34</span>
+                    </div>
                 </div>
-                <div class="mock-bar-row">
-                    <span class="mock-cat">Food</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar mock-bar-2" style="width: 52%"></div>
+                <div class="category-bars">
+                    <div class="cat-row">
+                        <span class="cat-name">Food</span>
+                        <div class="cat-bar-track">
+                            <div class="cat-bar cat-food" style="width: 75%"></div>
+                        </div>
                     </div>
-                    <span class="mock-amt">₹3,200</span>
-                </div>
-                <div class="mock-bar-row">
-                    <span class="mock-cat">Health</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar mock-bar-3" style="width: 33%"></div>
+                    <div class="cat-row">
+                        <span class="cat-name">Travel</span>
+                        <div class="cat-bar-track">
+                            <div class="cat-bar cat-travel" style="width: 55%"></div>
+                        </div>
                     </div>
-                    <span class="mock-amt">₹2,050</span>
-                </div>
-                <div class="mock-bar-row">
-                    <span class="mock-cat">Transport</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar mock-bar-4" style="width: 28%"></div>
+                    <div class="cat-row">
+                        <span class="cat-name">Bills</span>
+                        <div class="cat-bar-track">
+                            <div class="cat-bar cat-bills" style="width: 40%"></div>
+                        </div>
                     </div>
-                    <span class="mock-amt">₹1,800</span>
                 </div>
             </div>
         </div>
@@ -88,5 +93,52 @@
         <a href="{{ url_for('register') }}" class="btn-primary">Create free account</a>
     </div>
 </section>
+
+<div id="video-modal" class="modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+        <button class="modal-close" id="modal-close">&times;</button>
+        <div class="modal-video">
+            <iframe id="video-frame" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var trigger = document.getElementById('video-trigger');
+    var modal = document.getElementById('video-modal');
+    var closeBtn = document.getElementById('modal-close');
+    var backdrop = modal.querySelector('.modal-backdrop');
+    var iframe = document.getElementById('video-frame');
+
+    function openModal() {
+        var videoSrc = trigger.getAttribute('data-video') + '?autoplay=1';
+        iframe.src = videoSrc;
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+        iframe.src = '';
+    }
+
+    trigger.addEventListener('click', function(e) {
+        e.preventDefault();
+        openModal();
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('open')) {
+            closeModal();
+        }
+    });
+})();
+</script>
 
 {% endblock %}

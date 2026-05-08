@@ -1,4 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, g, render_template
+
+from database.db import get_db, init_db, seed_db
 
 app = Flask(__name__)
 
@@ -59,6 +61,18 @@ def edit_expense(id):
 @app.route("/expenses/<int:id>/delete")
 def delete_expense(id):
     return "Delete expense — coming in Step 9"
+
+
+with app.app_context():
+    init_db()
+    seed_db()
+
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, "_database", None)
+    if db is not None:
+        db.close()
 
 
 if __name__ == "__main__":
