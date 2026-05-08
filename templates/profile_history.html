@@ -10,6 +10,17 @@
             <p class="profile-subtitle">{{ total_count }} transaction(s) found</p>
         </div>
 
+        <div class="date-filter-form">
+            <form method="GET" action="{{ url_for('profile_history') }}">
+                <input type="date" name="start" value="{{ start_date or '' }}" placeholder="Start date">
+                <input type="date" name="end" value="{{ end_date or '' }}" placeholder="End date">
+                <button type="submit">Filter</button>
+                {% if start_date or end_date %}
+                <a href="{{ url_for('profile_history') }}" class="clear-btn">Clear</a>
+                {% endif %}
+            </form>
+        </div>
+
         <div class="history-card">
             <table class="history-table">
                 <thead>
@@ -40,11 +51,11 @@
         {% if total_pages > 1 %}
         <div class="pagination">
             {% if page > 1 %}
-            <a href="{{ url_for('profile_history', page=page-1) }}" class="page-link">← Previous</a>
+            <a href="{{ url_for('profile_history', page=page-1, start=start_date, end=end_date) }}" class="page-link">← Previous</a>
             {% endif %}
             <span class="page-info">Page {{ page }} of {{ total_pages }}</span>
             {% if page < total_pages %}
-            <a href="{{ url_for('profile_history', page=page+1) }}" class="page-link">Next →</a>
+            <a href="{{ url_for('profile_history', page=page+1, start=start_date, end=end_date) }}" class="page-link">Next →</a>
             {% endif %}
         </div>
         {% endif %}

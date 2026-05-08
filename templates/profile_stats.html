@@ -10,6 +10,17 @@
             <p class="profile-subtitle">Your spending at a glance</p>
         </div>
 
+        <div class="date-filter-form">
+            <form method="GET" action="{{ url_for('profile_stats') }}">
+                <input type="date" name="start" value="{{ start_date or '' }}" placeholder="Start date">
+                <input type="date" name="end" value="{{ end_date or '' }}" placeholder="End date">
+                <button type="submit">Filter</button>
+                {% if start_date or end_date %}
+                <a href="{{ url_for('profile_stats') }}" class="clear-btn">Clear</a>
+                {% endif %}
+            </form>
+        </div>
+
         {% if stats.tx_count == 0 %}
         <div class="stats-empty">
             <p>No expenses recorded yet.</p>
