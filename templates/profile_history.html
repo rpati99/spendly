@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Transaction History — Spendly{% endblock %}
+
+{% block content %}
+<section class="profile-page">
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1 class="profile-title">Transaction History</h1>
+            <p class="profile-subtitle">{{ total_count }} transaction(s) found</p>
+        </div>
+
+        <div class="history-card">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in expenses %}
+                    <tr>
+                        <td>{{ e.date }}</td>
+                        <td><span class="cat-badge cat-{{ e.category.lower() }}">{{ e.category }}</span></td>
+                        <td class="amount-cell">₹{{ "%.2f"|format(e.amount) }}</td>
+                        <td class="desc-cell">{{ e.description or "—" }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="empty-cell">No expenses found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if total_pages > 1 %}
+        <div class="pagination">
+            {% if page > 1 %}
+            <a href="{{ url_for('profile_history', page=page-1) }}" class="page-link">← Previous</a>
+            {% endif %}
+            <span class="page-info">Page {{ page }} of {{ total_pages }}</span>
+            {% if page < total_pages %}
+            <a href="{{ url_for('profile_history', page=page+1) }}" class="page-link">Next →</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

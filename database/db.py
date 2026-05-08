@@ -51,6 +51,76 @@ def get_user_by_id(user_id):
     return cur.fetchone()
 
 
+def get_user_expenses(user_id, limit=20, offset=0):
+    db = get_db()
+    cur = db.execute(
+        "SELECT id, amount, category, date, description, created_at "
+        "FROM expenses WHERE user_id = ? ORDER BY date DESC, id DESC LIMIT ? OFFSET ?",
+        (user_id, limit, offset),
+    )
+    return cur.fetchall()
+
+
+def count_user_expenses(user_id):
+    db = get_db()
+    cur = db.execute("SELECT COUNT(*) as count FROM expenses WHERE user_id = ?", (user_id,))
+    return cur.fetchone()["count"]
+
+
+def get_expense_stats(user_id):
+    db = get_db()
+    row = db.execute(
+        "SELECT COUNT(*) as tx_count, COALESCE(SUM(amount), 0) as total_spent, "
+        "COALESCE(AVG(amount), 0) as avg_amount FROM expenses WHERE user_id = ?",
+        (user_id,),
+    ).fetchone()
+
+    total = row["total_spent"]
+    tx_count = row["tx_count"]
+
+    cur = db.execute(
+        "SELECT MIN(date) as first_date FROM expenses WHERE user_id = ?", (user_id,)
+    )
+    first_row = cur.fetchone()
+
+    monthly_avg = 0
+    if tx_count > 0 and first_row["first_date"]:
+        import datetime
+        from datetime import datetime as dt
+        first = dt.strptime(first_row["first_date"], "%Y-%m-%d")
+        now = dt.now()
+        months = max((now.year - first.year) * 12 + (now.month - first.month), 1)
+        monthly_avg = round(total / months, 2)
+
+    return {
+        "total_spent": round(total, 2),
+        "tx_count": tx_count,
+        "avg_amount": round(row["avg_amount"], 2),
+        "monthly_avg": monthly_avg,
+    }
+
+
+def get_category_breakdown(user_id):
+    db = get_db()
+    cur = db.execute(
+        "SELECT category, COUNT(*) as tx_count, COALESCE(SUM(amount), 0) as total "
+        "FROM expenses WHERE user_id = ? GROUP BY category ORDER BY total DESC",
+        (user_id,),
+    )
+    rows = cur.fetchall()
+
+    grand_total = sum(r["total"] for r in rows) or 1
+    breakdown = []
+    for r in rows:
+        breakdown.append({
+            "category": r["category"],
+            "total": round(r["total"], 2),
+            "tx_count": r["tx_count"],
+            "pct": round(r["total"] / grand_total * 100, 1),
+        })
+    return breakdown
+
+
 def seed_db():
     db = get_db()
     cur = db.execute("SELECT COUNT(*) FROM users")

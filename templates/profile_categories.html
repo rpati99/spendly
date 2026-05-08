@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Category Breakdown — Spendly{% endblock %}
+
+{% block content %}
+<section class="profile-page">
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1 class="profile-title">Category Breakdown</h1>
+            <p class="profile-subtitle">Where your money goes</p>
+        </div>
+
+        {% if not breakdown %}
+        <div class="stats-empty">
+            <p>No expenses recorded yet.</p>
+        </div>
+        {% else %}
+        <div class="category-card">
+            <div class="category-list">
+                {% for cat in breakdown %}
+                <div class="category-row">
+                    <div class="category-row-header">
+                        <span class="category-name">
+                            <span class="cat-dot cat-dot-{{ cat.category.lower() }}"></span>
+                            {{ cat.category }}
+                        </span>
+                        <span class="category-amount">₹{{ "%.2f"|format(cat.total) }}</span>
+                    </div>
+                    <div class="category-bar-track">
+                        <div class="category-bar-fill cat-fill-{{ cat.category.lower() }}" style="width: {{ cat.pct }}%"></div>
+                    </div>
+                    <div class="category-row-footer">
+                        <span class="category-pct">{{ cat.pct }}%</span>
+                        <span class="category-count">{{ cat.tx_count }} transaction(s)</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="category-total">
+                <span>Total</span>
+                <span>₹{{ "%.2f"|format(grand_total) }}</span>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
