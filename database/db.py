@@ -45,6 +45,12 @@ def get_user_by_email(email):
     return cur.fetchone()
 
 
+def get_user_by_id(user_id):
+    db = get_db()
+    cur = db.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+    return cur.fetchone()
+
+
 def seed_db():
     db = get_db()
     cur = db.execute("SELECT COUNT(*) FROM users")

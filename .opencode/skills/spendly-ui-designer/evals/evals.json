@@ -1,0 +1,20 @@
+{
+  "skill_name": "spendly-ui-designer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design the profile page with account info, name update form, and password change form",
+      "expected_output": "profile.html template extending base.html, with CSS classes matching existing style.css patterns"
+    },
+    {
+      "id": 2,
+      "prompt": "Create a UI for adding expenses with amount, category dropdown, date picker, and description fields",
+      "expected_output": "add_expense.html template with form fields, category selector using existing CSS variables"
+    },
+    {
+      "id": 3,
+      "prompt": "Build a responsive expense list component that shows expenses in a table with category icons and delete/edit actions",
+      "expected_output": "Expense list HTML/CSS with table layout, category badges, action buttons, responsive design"
+    }
+  ]
+}

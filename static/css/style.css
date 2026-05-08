@@ -741,3 +741,217 @@ a { color: inherit; text-decoration: none; }
 
 .dashboard-welcome p { color: var(--ink-soft); margin-bottom: 0.5rem; }
 .dashboard-welcome strong { color: var(--ink); }
+
+/* ------------------------------------------------------------------ */
+/* Profile Page                                                        */
+/* ------------------------------------------------------------------ */
+
+.profile-section-title {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.profile-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink-muted);
+}
+
+.amount-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.currency-symbol {
+    position: absolute;
+    left: 0.875rem;
+    color: var(--ink-muted);
+    font-weight: 500;
+    pointer-events: none;
+}
+
+.amount-input {
+    padding-left: 2rem;
+}
+
+.form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6b6b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.875rem center;
+    padding-right: 2.5rem;
+    cursor: pointer;
+}
+
+.profile-value {
+    font-size: 0.95rem;
+    color: var(--ink);
+    font-weight: 500;
+}
+
+/* ------------------------------------------------------------------ */
+/* Expense Form                                                        */
+/* ------------------------------------------------------------------ */
+
+.amount-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.currency-symbol {
+    position: absolute;
+    left: 0.875rem;
+    color: var(--ink-muted);
+    font-weight: 500;
+    pointer-events: none;
+}
+
+.amount-input {
+    padding-left: 2rem;
+}
+
+.form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6b6b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.875rem center;
+    padding-right: 2.5rem;
+    cursor: pointer;
+}
+
+.form-select:focus {
+    border-color: var(--accent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Add Expense Page                                                     */
+/* ------------------------------------------------------------------ */
+
+.expense-form-section {
+    padding: 2rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.expense-form-header {
+    margin-bottom: 2rem;
+}
+
+.expense-form-title {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    color: var(--ink);
+    margin-bottom: 0.25rem;
+}
+
+.expense-form-subtitle {
+    color: var(--ink-muted);
+    font-size: 0.95rem;
+}
+
+.expense-form-card {
+    background: var(--paper-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 2rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+@media (max-width: 500px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* Profile Page                                                        */
+/* ------------------------------------------------------------------ */
+
+.profile-page {
+    padding: 3rem 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.profile-container {
+    width: 100%;
+}
+
+.profile-header {
+    margin-bottom: 2.5rem;
+}
+
+.profile-title {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    color: var(--ink);
+    margin-bottom: 0.25rem;
+}
+
+.profile-subtitle {
+    color: var(--ink-muted);
+    font-size: 0.95rem;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 1.5rem;
+}
+
+.profile-card {
+    background: var(--paper-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+}
+
+.profile-card-title {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.profile-forms {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-page {
+        padding: 2rem 1rem;
+    }
+}
