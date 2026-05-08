@@ -1,6 +1,6 @@
 import sqlite3
 from flask import g
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 DATABASE = "expense_tracker.db"
 
@@ -37,6 +37,12 @@ def init_db():
         );
     """)
     db.commit()
+
+
+def get_user_by_email(email):
+    db = get_db()
+    cur = db.execute("SELECT * FROM users WHERE email = ?", (email,))
+    return cur.fetchone()
 
 
 def seed_db():

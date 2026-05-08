@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — Spendly{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-section">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Welcome back{{ user['name'] }}</h1>
+        <p class="dashboard-subtitle">Your expense tracker dashboard</p>
+    </div>
+
+    <div class="dashboard-welcome">
+        <p>Hello, <strong>{{ user['name'] }}</strong>!</p>
+        <p>Your expense tracking dashboard is ready. Expenses functionality coming in Step 7.</p>
+    </div>
+</section>
+
+{% endblock %}

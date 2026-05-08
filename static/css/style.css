@@ -658,3 +658,86 @@ a { color: inherit; text-decoration: none; }
     height: 100%;
     border-radius: var(--radius-md);
 }
+
+/* ------------------------------------------------------------------ */
+/* Flash Messages                                                      */
+/* ------------------------------------------------------------------ */
+
+.flash-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 1rem 2rem 0;
+}
+
+.flash {
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.flash-error,
+.auth-error {
+    background: var(--danger-light);
+    color: var(--danger);
+    border: 1px solid #f5c6c2;
+}
+
+.flash-success,
+.auth-success {
+    background: var(--success-light);
+    color: #1a9056;
+    border: 1px solid #b8e9ce;
+}
+
+/* ------------------------------------------------------------------ */
+/* Navbar Logout Button                                                */
+/* ------------------------------------------------------------------ */
+
+.nav-logout-form { display: inline; }
+
+.nav-logout-btn {
+    background: none;
+    border: none;
+    color: var(--ink-muted);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.nav-logout-btn:hover { color: var(--danger); }
+
+/* ------------------------------------------------------------------ */
+/* Dashboard                                                           */
+/* ------------------------------------------------------------------ */
+
+.dashboard-section {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.dashboard-header { margin-bottom: 2rem; }
+
+.dashboard-title {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    color: var(--ink);
+    margin-bottom: 0.25rem;
+}
+
+.dashboard-subtitle { color: var(--ink-muted); font-size: 0.95rem; }
+
+.dashboard-welcome {
+    background: var(--paper-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+}
+
+.dashboard-welcome p { color: var(--ink-soft); margin-bottom: 0.5rem; }
+.dashboard-welcome strong { color: var(--ink); }

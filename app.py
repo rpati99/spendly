@@ -1,8 +1,10 @@
-from flask import Flask, g, render_template
+from flask import Flask, g, render_template, session, flash, redirect, url_for, request
 
-from database.db import get_db, init_db, seed_db
+from database.db import get_db, init_db, seed_db, get_user_by_email
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
+app.secret_key = "dev-secret-key-change-in-production"
 
 
 # ------------------------------------------------------------------ #
@@ -14,23 +16,90 @@ def landing():
     return render_template("landing.html")
 
 
-@app.route("/register")
+@app.route("/register", methods=["GET", "POST"])
 def register():
+    if "user_id" in session:
+        return redirect(url_for("dashboard"))
+
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "")
+
+        if not name or not email or not password:
+            flash("All fields are required.", "error")
+            return redirect(url_for("register"))
+
+        if len(password) < 8:
+            flash("Password must be at least 8 characters.", "error")
+            return redirect(url_for("register"))
+
+        existing = get_user_by_email(email)
+        if existing:
+            flash("An account with this email already exists.", "error")
+            return redirect(url_for("register"))
+
+        pw_hash = generate_password_hash(password, method="pbkdf2:sha256")
+        db = get_db()
+        db.execute(
+            "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
+            (name, email, pw_hash),
+        )
+        db.commit()
+
+        flash("Account created! Please log in.", "success")
+        return redirect(url_for("login"))
+
     return render_template("register.html")
 
 
-@app.route("/login")
-def login():
-    return render_template("login.html")
 
 
 # ------------------------------------------------------------------ #
 # Placeholder routes — students will implement these                  #
 # ------------------------------------------------------------------ #
 
-@app.route("/logout")
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if "user_id" in session:
+        return redirect(url_for("dashboard"))
+
+    if request.method == "POST":
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "")
+
+        if not email or not password:
+            flash("Email and password are required.", "error")
+            return redirect(url_for("login"))
+
+        user = get_user_by_email(email)
+        if not user or not check_password_hash(user["password_hash"], password):
+            flash("Invalid email or password.", "error")
+            return redirect(url_for("login"))
+
+        session.clear()
+        session["user_id"] = user["id"]
+        return redirect(url_for("dashboard"))
+
+    return render_template("login.html")
+
+
+@app.route("/logout", methods=["GET", "POST"])
 def logout():
-    return "Logout — coming in Step 3"
+    session.clear()
+    flash("You have been logged out.", "success")
+    return redirect(url_for("login"))
+
+
+@app.route("/dashboard")
+def dashboard():
+    if "user_id" not in session:
+        flash("Please log in to access your dashboard.", "error")
+        return redirect(url_for("login"))
+
+    db = get_db()
+    user = db.execute("SELECT name FROM users WHERE id = ?", (session["user_id"],)).fetchone()
+    return render_template("dashboard.html", user=user)
 
 
 @app.route("/terms")
