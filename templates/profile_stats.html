@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Expense Summary — Spendly{% endblock %}
+
+{% block content %}
+<section class="profile-page">
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1 class="profile-title">Expense Summary</h1>
+            <p class="profile-subtitle">Your spending at a glance</p>
+        </div>
+
+        {% if stats.tx_count == 0 %}
+        <div class="stats-empty">
+            <p>No expenses recorded yet.</p>
+        </div>
+        {% else %}
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-card-label">Total Spent</span>
+                <span class="stat-card-value">₹{{ "%.2f"|format(stats.total_spent) }}</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-card-label">Monthly Average</span>
+                <span class="stat-card-value">₹{{ "%.2f"|format(stats.monthly_avg) }}</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-card-label">Transactions</span>
+                <span class="stat-card-value">{{ stats.tx_count }}</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-card-label">Avg per Transaction</span>
+                <span class="stat-card-value">₹{{ "%.2f"|format(stats.avg_amount) }}</span>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

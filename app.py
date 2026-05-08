@@ -1,6 +1,6 @@
 from flask import Flask, g, render_template, session, flash, redirect, url_for, request
 
-from database.db import get_db, init_db, seed_db, get_user_by_email, get_user_by_id
+from database.db import get_db, init_db, seed_db, get_user_by_email, get_user_by_id, get_user_expenses, count_user_expenses, get_expense_stats, get_category_breakdown
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
@@ -172,14 +172,56 @@ def profile():
     return render_template("profile.html", user=user)
 
 
+@app.route("/profile/history")
+def profile_history():
+    if "user_id" not in session:
+        flash("Please log in to access your history.", "error")
+        return redirect(url_for("login"))
+
+    page = request.args.get("page", 1, type=int)
+    per_page = 20
+    expenses = get_user_expenses(session["user_id"], limit=per_page, offset=(page - 1) * per_page)
+    total = count_user_expenses(session["user_id"])
+    total_pages = max(1, (total + per_page - 1) // per_page)
+
+    return render_template(
+        "profile_history.html",
+        expenses=expenses,
+        page=page,
+        total_pages=total_pages,
+        total_count=total,
+    )
+
+
 @app.route("/expenses/add")
 def add_expense():
     return "Add expense — coming in Step 7"
 
 
+@app.route("/profile/stats")
+def profile_stats():
+    if "user_id" not in session:
+        flash("Please log in to view your stats.", "error")
+        return redirect(url_for("login"))
+
+    stats = get_expense_stats(session["user_id"])
+    return render_template("profile_stats.html", stats=stats)
+
+
 @app.route("/expenses/<int:id>/edit")
 def edit_expense(id):
     return "Edit expense — coming in Step 8"
+
+
+@app.route("/profile/categories")
+def profile_categories():
+    if "user_id" not in session:
+        flash("Please log in to view categories.", "error")
+        return redirect(url_for("login"))
+
+    breakdown = get_category_breakdown(session["user_id"])
+    grand_total = sum(b["total"] for b in breakdown)
+    return render_template("profile_categories.html", breakdown=breakdown, grand_total=grand_total)
 
 
 @app.route("/expenses/<int:id>/delete")
