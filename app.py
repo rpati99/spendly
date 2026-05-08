@@ -1,6 +1,6 @@
 from flask import Flask, g, render_template, session, flash, redirect, url_for, request
 
-from database.db import get_db, init_db, seed_db, get_user_by_email
+from database.db import get_db, init_db, seed_db, get_user_by_email, get_user_by_id
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
@@ -112,9 +112,64 @@ def privacy():
     return render_template("privacy.html")
 
 
-@app.route("/profile")
+@app.route("/profile", methods=["GET", "POST"])
 def profile():
-    return "Profile page — coming in Step 4"
+    if "user_id" not in session:
+        flash("Please log in to access your profile.", "error")
+        return redirect(url_for("login"))
+
+    user = get_user_by_id(session["user_id"])
+    if not user:
+        session.clear()
+        flash("User not found.", "error")
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        action = request.form.get("action")
+
+        if action == "update_name":
+            new_name = request.form.get("name", "").strip()
+            if not new_name:
+                flash("Name cannot be empty.", "error")
+                return redirect(url_for("profile"))
+
+            db = get_db()
+            db.execute("UPDATE users SET name = ? WHERE id = ?", (new_name, session["user_id"]))
+            db.commit()
+            flash("Name updated successfully.", "success")
+            return redirect(url_for("profile"))
+
+        elif action == "change_password":
+            current_password = request.form.get("current_password", "")
+            new_password = request.form.get("new_password", "")
+            confirm_password = request.form.get("confirm_password", "")
+
+            if not current_password or not new_password or not confirm_password:
+                flash("All password fields are required.", "error")
+                return redirect(url_for("profile"))
+
+            if not check_password_hash(user["password_hash"], current_password):
+                flash("Current password is incorrect.", "error")
+                return redirect(url_for("profile"))
+
+            if len(new_password) < 8:
+                flash("New password must be at least 8 characters.", "error")
+                return redirect(url_for("profile"))
+
+            if new_password != confirm_password:
+                flash("New passwords do not match.", "error")
+                return redirect(url_for("profile"))
+
+            pw_hash = generate_password_hash(new_password, method="pbkdf2:sha256")
+            db = get_db()
+            db.execute("UPDATE users SET password_hash = ? WHERE id = ?", (pw_hash, session["user_id"]))
+            db.commit()
+
+            session.clear()
+            flash("Password changed successfully. Please log in again.", "success")
+            return redirect(url_for("login"))
+
+    return render_template("profile.html", user=user)
 
 
 @app.route("/expenses/add")

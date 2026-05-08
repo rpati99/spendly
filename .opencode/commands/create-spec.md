@@ -55,12 +55,12 @@ git checkout -b <branch_name>
 
 ## Step 6 — Research the codebase
 Read these files before writing the spec:
-- `CLAUDE.md` — roadmap, conventions, schema
+- `AGENTS.md` — roadmap, conventions, schema
 - `app.py` — existing routes and structure
 - `database/db.py` — existing schema and functions
-- All files in `.claude/specs/` — avoid duplicating existing specs
+- All files in `.opencode/specs/` — avoid duplicating existing specs
 
-Check `CLAUDE.md` to confirm the requested step is not already
+Check `AGENTS.md` to confirm the requested step is not already
 marked complete. If it is, warn the user and stop.
 
 ## Step 7 — Write the spec
@@ -101,7 +101,7 @@ Every new file that will be created.
 Any new pip packages. If none: state "No new dependencies".
 
 ## Rules for implementation
-Specific constraints Claude must follow. Always include:
+Specific constraints Opencode model must follow. Always include:
 - No SQLAlchemy or ORMs
 - Parameterised queries only
 - Passwords hashed with werkzeug
@@ -114,13 +114,13 @@ something that can be verified by running the app.
 ---
 
 ## Step 8 — Save the spec
-Save to: `.claude/specs/<step_number>-<feature_slug>.md`
+Save to: `.opencode/specs/<step_number>-<feature_slug>.md`
 
 ## Step 9 — Report to the user
 Print a short summary in this exact format:
 ```
 Branch:    <branch_name>
-Spec file: .claude/specs/<step_number>-<feature_slug>.md
+Spec file: .opencode/specs/<step_number>-<feature_slug>.md
 Title:     <feature_title>
 ```
 
