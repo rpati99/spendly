@@ -256,6 +256,15 @@ def delete_expense(id):
     return "Delete expense — coming in Step 9"
 
 
+@app.route("/analytics")
+def analytics():
+    if "user_id" not in session:
+        flash("Please log in to access Analytics.", "error")
+        return redirect(url_for("login"))
+
+    return render_template("analytics.html")
+
+
 with app.app_context():
     init_db()
     seed_db()

@@ -147,6 +147,8 @@ def seed_db():
         "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
         ("Demo User", "demo@spendly.com", pw_hash),
     )
+    cur = db.execute("SELECT last_insert_rowid()")
+    demo_user_id = cur.fetchone()[0]
 
     expenses = [
         ("Food", 12.50, "2026-05-02", "Grocery run"),
@@ -161,6 +163,6 @@ def seed_db():
     for cat, amt, dt, desc in expenses:
         db.execute(
             "INSERT INTO expenses (user_id, amount, category, date, description) VALUES (?, ?, ?, ?, ?)",
-            (1, amt, cat, dt, desc),
+            (demo_user_id, amt, cat, dt, desc),
         )
     db.commit()
