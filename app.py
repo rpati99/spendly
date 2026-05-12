@@ -1,7 +1,7 @@
 from flask import Flask, g, render_template, session, flash, redirect, url_for, request
 from datetime import datetime
 
-from database.db import get_db, init_db, seed_db, get_user_by_email, get_user_by_id, get_user_expenses, count_user_expenses, get_expense_stats, get_category_breakdown
+from database.db import get_db, init_db, seed_db, get_user_by_email, get_user_by_id, get_user_expenses, count_user_expenses, get_expense_stats, get_category_breakdown, create_expense
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
@@ -218,9 +218,35 @@ def profile_history():
     )
 
 
-@app.route("/expenses/add")
+@app.route("/expenses/add", methods=["GET", "POST"])
 def add_expense():
-    return "Add expense — coming in Step 7"
+    if "user_id" not in session:
+        flash("Please log in to add an expense.", "error")
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        amount = request.form.get("amount", type=float)
+        category = request.form.get("category", "").strip()
+        date = request.form.get("date", "").strip()
+        description = request.form.get("description", "").strip()
+
+        if not amount or not category or not date:
+            flash("Amount, category, and date are required.", "error")
+            return redirect(url_for("add_expense"))
+
+        # Capitalize category (template uses lowercase, seed data uses title case)
+        category_map = {
+            "food": "Food", "travel": "Transport", "bills": "Bills",
+            "shopping": "Shopping", "entertainment": "Entertainment",
+            "healthcare": "Health", "other": "Other"
+        }
+        category = category_map.get(category.lower(), category.title())
+
+        create_expense(session["user_id"], amount, category, date, description)
+        flash("Expense added successfully.", "success")
+        return redirect(url_for("dashboard"))
+
+    return render_template("add_expense.html")
 
 
 @app.route("/profile/stats")

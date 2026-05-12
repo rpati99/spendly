@@ -58,7 +58,7 @@ Read these files before writing the spec:
 - `AGENTS.md` — roadmap, conventions, schema
 - `app.py` — existing routes and structure
 - `database/db.py` — existing schema and functions
-- All files in `.opencode/specs/` — avoid duplicating existing specs
+- All files in `.claude/specs/` — avoid duplicating existing specs
 
 Check `AGENTS.md` to confirm the requested step is not already
 marked complete. If it is, warn the user and stop.
@@ -101,7 +101,7 @@ Every new file that will be created.
 Any new pip packages. If none: state "No new dependencies".
 
 ## Rules for implementation
-Specific constraints Opencode model must follow. Always include:
+Specific constraints claude model must follow. Always include:
 - No SQLAlchemy or ORMs
 - Parameterised queries only
 - Passwords hashed with werkzeug
@@ -114,18 +114,18 @@ something that can be verified by running the app.
 ---
 
 ## Step 8 — Save the spec
-Save to: `.opencode/specs/<step_number>-<feature_slug>.md`
+Save to: `.claude/specs/<step_number>-<feature_slug>.md`
 
 ## Step 9 — Report to the user
 Print a short summary in this exact format:
 ```
 Branch:    <branch_name>
-Spec file: .opencode/specs/<step_number>-<feature_slug>.md
+Spec file: .claude/specs/<step_number>-<feature_slug>.md
 Title:     <feature_title>
 ```
 
 Then tell the user:
-"Review the spec at `.opencode/specs/<step_number>-<feature_slug>.md`
+"Review the spec at `.claude/specs/<step_number>-<feature_slug>.md`
 then enter Plan Mode with Shift+Tab twice to begin implementation."
 
 Do not print the full spec in chat unless explicitly asked.
