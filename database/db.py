@@ -136,6 +136,15 @@ def get_category_breakdown(user_id, start_date=None, end_date=None):
     return breakdown
 
 
+def create_expense(user_id, amount, category, date, description):
+    db = get_db()
+    db.execute(
+        "INSERT INTO expenses (user_id, amount, category, date, description) VALUES (?, ?, ?, ?, ?)",
+        (user_id, amount, category, date, description or None),
+    )
+    db.commit()
+
+
 def seed_db():
     db = get_db()
     cur = db.execute("SELECT COUNT(*) FROM users")
