@@ -145,6 +145,24 @@ def create_expense(user_id, amount, category, date, description):
     db.commit()
 
 
+def get_expense_by_id(expense_id):
+    db = get_db()
+    cur = db.execute(
+        "SELECT id, user_id, amount, category, date, description FROM expenses WHERE id = ?",
+        (expense_id,),
+    )
+    return cur.fetchone()
+
+
+def update_expense(expense_id, user_id, amount, category, date, description):
+    db = get_db()
+    db.execute(
+        "UPDATE expenses SET amount = ?, category = ?, date = ?, description = ? WHERE id = ? AND user_id = ?",
+        (amount, category, date, description or None, expense_id, user_id),
+    )
+    db.commit()
+
+
 def seed_db():
     db = get_db()
     cur = db.execute("SELECT COUNT(*) FROM users")
