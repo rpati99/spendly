@@ -1,7 +1,7 @@
-from flask import Flask, g, render_template, session, flash, redirect, url_for, request
+from flask import Flask, g, render_template, session, flash, redirect, url_for, request, abort
 from datetime import datetime
 
-from database.db import get_db, init_db, seed_db, get_user_by_email, get_user_by_id, get_user_expenses, count_user_expenses, get_expense_stats, get_category_breakdown, create_expense
+from database.db import get_db, init_db, seed_db, get_user_by_email, get_user_by_id, get_user_expenses, count_user_expenses, get_expense_stats, get_category_breakdown, create_expense, get_expense_by_id, update_expense
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
@@ -260,9 +260,38 @@ def profile_stats():
     return render_template("profile_stats.html", stats=stats, start_date=start_date, end_date=end_date)
 
 
-@app.route("/expenses/<int:id>/edit")
+@app.route("/expenses/<int:id>/edit", methods=["GET", "POST"])
 def edit_expense(id):
-    return "Edit expense — coming in Step 8"
+    if "user_id" not in session:
+        flash("Please log in to edit an expense.", "error")
+        return redirect(url_for("login"))
+
+    expense = get_expense_by_id(id)
+    if not expense or expense["user_id"] != session["user_id"]:
+        abort(404)
+
+    if request.method == "POST":
+        amount = request.form.get("amount", type=float)
+        category = request.form.get("category", "").strip()
+        date = request.form.get("date", "").strip()
+        description = request.form.get("description", "").strip()
+
+        if not amount or not category or not date:
+            flash("Amount, category, and date are required.", "error")
+            return redirect(url_for("edit_expense", id=id))
+
+        category_map = {
+            "food": "Food", "travel": "Transport", "bills": "Bills",
+            "shopping": "Shopping", "entertainment": "Entertainment",
+            "healthcare": "Health", "other": "Other"
+        }
+        category = category_map.get(category.lower(), category.title())
+
+        update_expense(id, session["user_id"], amount, category, date, description)
+        flash("Expense updated successfully.", "success")
+        return redirect(url_for("dashboard"))
+
+    return render_template("edit_expense.html", expense=expense)
 
 
 @app.route("/profile/categories")
